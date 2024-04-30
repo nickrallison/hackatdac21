@@ -3,9 +3,115 @@ This repository has been directly duplicated from the original OpenPiton reposit
 
 If you intend to utilize this repository for your research purposes, we strongly advise you to carefully review and adhere to both the HACK@DAC and OpenPiton licensing terms.
 
+## Bugs List
+
+The following bugs were inserted into the SoC:
+Bug ID |	Bug	| CWE ID
+-------|--------|-------
+1	|JTAG password flag not reset properly	| CWE-1239
+2	|Able to write using JTAG without password	| CWE-1245
+3	|JTAG is padded to be 256 bits	CWE-1195 & | CWE-325
+4	|JTAG not temporarily disabled after several continuous wrong password attempts	| CWE-1191
+5	|Processor access to HMAC grants it access to PKT regardless of PKT access configuration	| CWE-1220
+6	|UART cannot be accessed from user mode	| CWE-276
+7	|Incorrect access control setting leaving debug enabled	| CWE-1220
+8	|Fan speed can be controlled from unprivileged application	| CWE-1262
+9	|PLIC registers are not protected by access control	| CWE-1220
+10	|ROM registers are not protected by access control	| CWE-1220
+11	|DMA registers are not protected by access control	| CWE-1220
+12	|UART registers are not protected by access control	| CWE-1317
+13	|AES internal registers are visible externally	| CWE-1357
+14	|Counter register in AES CTR mode does not increase	| CWE-1240
+15	|Crypto oracle for encrypt/decrypt is exposed to unprivileged applications	| CWE-1189
+16	|SHA is not properly checked during Boot test	
+17	|Boot ROM code performs insufficient checks on PRNG core.	
+18	|Access to CSRs from lower privilege level	| CWE-1262
+19	|Receive CSR interrupts when committing atomic instructions	| CWE-1281
+20	|Commit the second instruction even if the first is atomic instruction	| CWE-1281
+21	|Same cycle counter used for both CSR mcycle and cycle	| CWE-1303
+22	|Instruction retired counters are updated in non-debug mode	| CWE-440
+23	|IRQ source input badly connected	| CWE-1276
+24	|SoC uses asynchronous resets	| CWE-1245
+25	|DMA does not clear the local memory after a transfer request is complete.  	| CWE-1268
+26	|The implementation of strcmp system call is not constant in time	
+27	|Protected memory regions can be accessed through system call address pointer arguments	
+28	|AES key stored in memory at bootup and is not cleared before exiting from firmware setup	| CWE-1274
+29	|Debug module does not reset on a system reset	| CWE-1239
+30	|JTAG key is hardcoded	| CWE-1329
+31	|DMA registers are not locked	| CWE-1233
+32	|PLIC registers are not locked	| CWE-1233
+33	|ROM registers are not locked	| CWE-1233
+34	|UART registers are not locked	| CWE-1233
+35	|Reg locks are disabled by default when reset	| CWE-1232
+36	|SHA input data not cleared after HASH computation	| CWE-1239
+37	|The SHA wrapper uses non-blocking assignment for variables which can cause timing issues	| CWE-1245
+38	|HMAC can only use messages of 512-bits.	| CWE-325
+39	|AES plain text is left uncleared after the encryption is over in the peripheral registers	| CWE-226
+40	|One of AES user keys is all zeros (weak key)	| CWE-1240
+41	|AES encryption system calls can cause race condition between different users	| CWE-1223
+42	|At reset, the access control values are set to full access	| CWE-276
+43	|Reg locks are not set for some of the ACCT registers	| CWE-1262
+44	|HMAC only works correctly for strings of size < 448 bits	| CWE-325
+45	|DMA transfer does not check for the max length condition in syscall	| CWE-1260
+46	|Not disconnecting sensitive data from fuse when in debug mode	| CWE-1243
+47	|not clearing one of the aes keys when entering debug mode	| CWE-1258
+48	|JTAG unlock disables the reglocks	| CWE-1234
+49	|Chicken bits corrupting access control value	| CWE-1242
+50	|Chicken bits corrupting reglk value	| CWE-1242
+51	|Chicken bits corrupting mie csr reg value	| CWE-1242
+52	|Chicken bits corrupting pmp check in DMA	| CWE-1242
+53	|Chicken bits corrupting jtag expected password	| CWE-1242
+54	|DMA can do load even if store pmp check fails and vice versa	| CWE-1245
+55	|DMA write only checks for end addr pmp access instead of entire range	| CWE-1220
+56	|Change in PMP config doesnt abort existing DMA transfer. If PMP changes after the DMA starts, then the store pmp checking might use the updated reg values and not the original ones	| CWE-1298
+57	|if abort is issued when there is no active command running in dma, the dma gets stuck in a unknown state	| CWE-1245
+58	|sha enters 'ignore' state if start and next are enabled at same time and cannot move out of 'ignore' state	| CWE-1245
+59	|pkt leaks fuse data bcz default case doesnt cover all possible values	| CWE-1245
+60	|AES leaks secret key0 bcz default case doesnt cover all possible values	| CWE-1245
+61	|AES0 key1 has same lower 128 bits as upper 128 bits (its a 256 bit key)	| CWE-1240
+62	|AES1 key2 has lower 128 bits as all 0's (its a 256 bit key)	| CWE-1240
+63	|sys_aes1_read_data length incorrect	
+64	|dma sys call length is used directly, but it is 64 bit words	
+65	|Th reset signal in one component of RNG is not correct. This will may the RNG only uses one combination of outputs from entropy sources	| 
+66	|Signals don't get reset entirely. If we didn't specify the size of signal, the simulation tool may only reset 32 bits of them to be zero	| CWE-1271
+67	|Signals don't get reset entirely. If we didn't specify the size of signal, the simulation tool may only reset 32 bits of them to be zero	| CWE-1271
+68	|The polynomial of the 32-bit RNG LSFR entropy source is 0. This will make the output from the entropy source the same as the input seed	| CWE-1240
+69	|LFSR polynomials is set by software and must be an irreducible polynomial [for maximum size chain], polynomial is not checked. See sample code.	| CWE-1240
+70	|Polynomials stored in fuse memory are NOT primitive polynomials for their respective fields. If software does not reconfigure them then the PRNG sequence is much shorter	| CWE-1240
+71	|RSA can generate 1 as encryption key, which will make the plain-text and crypt-text the same.	| CWE-1240
+72	|Reset registerlock, unlocking all registers: The reset_controller can send extra reset signals to peripherals. This give a chance to reset the registerlock, and make the private data of all other peripherals to be readable.	| CWE-1199
+73	|AES2 registers are accessible from user mode	| CWE-1262
+74	|HMAC registers are accessible from user mode	| CWE-1262
+75	|HMAC key registers are not locked by register locks	| CWE-1233
+76	|Some of the register lock registers are not locked by register locks	| CWE-1233
+77	|Some of the access control registers are not locked by register locks	| CWE-1233
+78	|Some of the PKT registers are not locked by register locks	| CWE-1233
+79	|Some of the SHA registers are not locked by register locks	| CWE-1233
+80	|AES1 key registers are not locked by register locks	| CWE-1233
+81	|Reset controller registers are not locked by register locks	| CWE-1233
+82	|HMAC and other modules in the chipset are using a clock that is not protected for glitches	| CWE-1247
+83	|Incorrect indices used to get the jtag_hash_o, ikey_hash_o, and okey_hash_o values from FUSE mem	| CWE-1221
+84	|Unreachable state WaitWriteValid in JTAG	| CWE-1245
+85	|Unreachable states, and don't-care transitions [0&4~7]->[1~3]	| CWE-1245
+86	|Unreachable states, and don't-care transitions [0&3]->[1~2]	| CWE-1245
+87	|Unreachable states, and don't-care transitions [4~7]->[0~3]	| CWE-1245
+88	|Unspecified behavior of HMAC/SHA256 I/O memory map interface	| CWE-1245
+89	|Power side channel on binary modular exponentiation module	| CWE-1300
+90	|Power side channel in the RSA core can leak private exponent to a physical attacker. Leaking private exponent leads to full private key recovery.	| CWE-1300
+91	|No bound checks are performed before function call in bootrom	
+92	|Integer overflow in bootrom	| CWE-1254
+93	|Integer overflow in bootrom	| CWE-1254
+94	|Integer overflow in bootrom	| CWE-1254
+95	|Output message on RSA is not cleared after a soft reset. This can leave decrypted data available in a memory mapped area.	| CWE-226
+96	|Rom module is hardcoded	| CWE-1310
+97	|Some registers of HMAC are not reset	| CWE-1239
+98	|AES core exposes the keys in debug mode	| CWE-1258
+99	|CLINT registers are not protected by access control	| CWE-1317
+
+
 ## Support & Questions
 
-For any issues with the SoC or any questions you can refer to [Hack@Event](https://hackatevent.org) website.
+For any issues with the SoC or any questions you can refer to [HackTheSilicon](http://hackthesilicon.com/) website.
 
 # OpenPiton Research Platform   [![Build Status](https://jenkins.princeton.edu/buildStatus/icon?job=cloud/piton_git_push_master)](https://jenkins.princeton.edu/job/cloud/job/piton_git_push_master/)
 
